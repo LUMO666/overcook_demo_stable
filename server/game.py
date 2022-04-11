@@ -2,13 +2,18 @@ from abc import ABC, abstractmethod
 from threading import Lock, Thread
 from queue import Queue, LifoQueue, Empty, Full
 from time import time
+import numpy as np
 from overcooked_ai_py.mdp.overcooked_mdp import OvercookedGridworld
 from overcooked_ai_py.mdp.overcooked_env import OvercookedEnv
 from overcooked_ai_py.mdp.actions import Action, Direction
 from overcooked_ai_py.planning.planners import MotionPlanner, NO_COUNTERS_PARAMS
-from human_aware_rl.rllib.rllib import load_agent
+#from human_aware_rl.rllib.rllib import load_agent
+from r_mappo.algorithm.overcooked_rMAPPOPolicy import R_MAPPOPolicy as Policy
 import random, os, pickle, json
+import gym
 import ray
+import pdb
+import torch
 
 # Relative path to where all static pre-trained agents are stored on server
 AGENT_DIR = None
@@ -16,10 +21,31 @@ AGENT_DIR = None
 # Maximum allowable game time (in seconds)
 MAX_GAME_TIME = None
 
+class Dict2obj(dict):
+    __setattr__ = dict.__setitem__
+    __getattr__ = dict.__getitem__
+
+def dict2obj(dictObj):
+    if not isinstance(dictObj,dict):
+        return dictObj
+    d = Dict2obj()
+    for k,v in dictObj.items():
+        d[k] = dict2obj(v)
+    return d
+
 def _configure(max_game_time, agent_dir):
     global AGENT_DIR, MAX_GAME_TIME
     MAX_GAME_TIME = max_game_time
     AGENT_DIR = agent_dir
+
+def _loadPPOargs(loadargs):
+    global PPO_args
+    obj = dict2obj(loadargs)
+    PPO_args = obj
+    
+
+def _t2n(x):
+    return x.detach().cpu().numpy()
 
 class Game(ABC):
 
@@ -402,10 +428,20 @@ class OvercookedGame(Game):
             "RIGHT" : Direction.EAST,
             "SPACE" : Action.INTERACT
         }
-        self.ticks_per_ai_action = 4
+        self.ticks_per_ai_action = 1
         self.curr_tick = 0
         self.human_players = set()
         self.npc_players = set()
+        #for PPO params
+        self.num_agents = 2
+        #self.rnn_states = np.zeros((1, self.num_agents, PPO_args.recurrent_N, PPO_args.hidden_size), dtype=np.float32)
+        self.masks = np.ones((1, self.num_agents, 1), dtype=np.float32)
+        self.curr_layout = self.layouts.pop()
+        self.mdp = OvercookedGridworld.from_layout_name(self.curr_layout, **self.mdp_params)
+        dummy_state = self.mdp.get_standard_start_state()
+        self.featurize_fn = lambda state: OvercookedEnv.from_mdp(self.mdp, horizon=400).lossless_state_encoding_mdp(state) # Encoding obs for PPO
+        self.rnn_states = np.zeros((1, self.num_agents, PPO_args.recurrent_N, PPO_args.hidden_size), dtype=np.float32)
+        self.obs = self._setup_observation_space()
 
         if randomized:
             random.shuffle(self.layouts)
@@ -421,7 +457,9 @@ class OvercookedGame(Game):
             self.add_player(player_one_id, idx=1, buff_size=1, is_human=False)
             self.npc_policies[player_one_id] = self.get_policy(playerOne, idx=1)
             self.npc_state_queues[player_one_id] = LifoQueue()
-        
+
+    def _action_convertor(self, action):
+        return [a[0] for a in list(action)]
 
     def _curr_game_over(self):
         return time() - self.start_time >= self.max_time
@@ -449,11 +487,27 @@ class OvercookedGame(Game):
 
 
     def npc_policy_consumer(self, policy_id):
+        
         queue = self.npc_state_queues[policy_id]
         policy = self.npc_policies[policy_id]
         while self._is_active:
             state = queue.get()
-            npc_action, _ = policy.action(state)
+            #obs = np.stack(np.array([self.featurize_fn(state)]))*255
+            obs = np.array([self.featurize_fn(state)[policy.agent_idx]])*255
+            #npc_action, rnn_states = policy.act(np.expand_dims(obs[:,policy.agent_idx,:,:,:],axis=1),
+            #                           np.expand_dims(self.rnn_states[:,policy.agent_idx,:,:],axis=1),
+            #                           np.expand_dims(self.masks[:,policy.agent_idx,:],axis=1),
+            #                           deterministic=True)
+            npc_action, rnn_states = policy.act(obs,
+                                       self.rnn_states[:,policy.agent_idx,:,:],
+                                       self.masks[:,policy.agent_idx,:],
+                                       deterministic=True)
+            #actions = np.array(np.split(_t2n(npc_action), 1))
+            action = self._action_convertor(npc_action)
+            print("agent",policy.agent_idx,action)
+            npc_action = Action.INDEX_TO_ACTION[action[0]]
+            #npc_action = Action.INDEX_TO_ACTION[action[0]]
+            self.rnn_states[:,policy.agent_idx,:,:] = np.array(_t2n(rnn_states)).copy()
             super(OvercookedGame, self).enqueue_action(policy_id, npc_action)
 
 
@@ -488,9 +542,10 @@ class OvercookedGame(Game):
         for i in range(len(self.players)):
             try:
                 joint_action[i] = self.pending_actions[i].get(block=False)
+                
             except Empty:
                 pass
-        
+        #print("joint:",joint_action)
         # Apply overcooked game logic to get state transition
         prev_state = self.state
         self.state, info = self.mdp.get_state_transition(prev_state, joint_action)
@@ -532,8 +587,14 @@ class OvercookedGame(Game):
         if not self.npc_players.union(self.human_players) == set(self.players):
             raise ValueError("Inconsistent State")
 
-        self.curr_layout = self.layouts.pop()
-        self.mdp = OvercookedGridworld.from_layout_name(self.curr_layout, **self.mdp_params)
+        #self.curr_layout = self.layouts.pop()
+        #self.mdp = OvercookedGridworld.from_layout_name(self.curr_layout, **self.mdp_params)
+        #dummy_state = self.mdp.get_standard_start_state()
+        #self.featurize_fn = lambda state: OvercookedEnv.from_mdp(self.mdp, horizon=400).lossless_state_encoding_mdp(state) # Encoding obs for PPO
+        #self.rnn_states = np.zeros((1, self.num_agents, PPO_args.recurrent_N, PPO_args.hidden_size), dtype=np.float32)
+        #self.obs = self._setup_observation_space()
+        #self.share_obs = self._setup_share_observation_space()
+        self.rnn_states = np.zeros((1, self.num_agents, PPO_args.recurrent_N, PPO_args.hidden_size), dtype=np.float32)
         if self.show_potential:
             self.mp = MotionPlanner.from_pickle_or_compute(self.mdp, counter_goals=NO_COUNTERS_PARAMS)
         self.state = self.mdp.get_standard_start_state()
@@ -544,7 +605,7 @@ class OvercookedGame(Game):
         self.score = 0
         self.threads = []
         for npc_policy in self.npc_policies:
-            self.npc_policies[npc_policy].reset()
+            #self.npc_policies[npc_policy].reset()
             self.npc_state_queues[npc_policy].put(self.state)
             t = Thread(target=self.npc_policy_consumer, args=(npc_policy,))
             self.threads.append(t)
@@ -578,7 +639,31 @@ class OvercookedGame(Game):
         obj_dict['state'] = self.get_state() if self._is_active else None
         return obj_dict
 
+    def _setup_observation_space(self):
+        dummy_state = self.mdp.get_standard_start_state()
+        obs_shape = self.featurize_fn(dummy_state)[0].shape
+        high = np.ones(obs_shape) * float("inf")
+        low = np.ones(obs_shape) * 0
+
+        return gym.spaces.Box(np.float32(low), np.float32(high), dtype=np.float32)
+        
+
     def get_policy(self, npc_id, idx=0):
+        obs_space = []
+        obs_space.append(self.obs)
+        action_space = []
+        action_space.append(gym.spaces.Discrete(len(Action.ALL_ACTIONS)))
+        policy = Policy(PPO_args,
+                             obs_space[0],
+                             action_space[0],
+                             idx)
+        policy_actor_state_dict = torch.load(os.getcwd()+'/actor.pt',map_location=torch.device('cpu'))
+        policy.actor.load_state_dict(policy_actor_state_dict)
+        policy.actor.eval()
+        return policy
+
+
+        '''
         if npc_id.lower().startswith("rllib"):
             try:
                 # Loading rllib agents requires additional helpers
@@ -598,6 +683,8 @@ class OvercookedGame(Game):
                     return pickle.load(f)
             except Exception as e:
                 raise IOError("Error loading agent\n{}".format(e.__repr__()))
+        '''
+
 
 
 class OvercookedPsiturk(OvercookedGame):
@@ -886,5 +973,3 @@ class TutorialAI():
     def reset(self):
         self.curr_tick = -1
         self.curr_phase += 1
-
-    

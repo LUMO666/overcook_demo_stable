@@ -1,9 +1,12 @@
 import os
+import pdb
 
 # Import and patch the production eventlet server if necessary
-if os.getenv('FLASK_ENV', 'production') == 'production':
-    import eventlet
-    eventlet.monkey_patch()
+#if os.getenv('FLASK_ENV', 'production') == 'production':
+#    import eventlet
+#    eventlet.monkey_patch()
+import eventlet
+eventlet.monkey_patch()
 
 # All other imports must come after patch to ensure eventlet compatibility
 import pickle, queue, atexit, json, logging
@@ -57,6 +60,9 @@ PSITURK_CONFIG = json.dumps(CONFIG['psiturk'])
 # Default configuration for tutorial
 TUTORIAL_CONFIG = json.dumps(CONFIG['tutorial'])
 
+#Onpolicy MAPPO Config
+PPO_ARGS = CONFIG['PPO_args']
+
 # Global queue of available IDs. This is how we synch game creation and keep track of how many games are in memory
 FREE_IDS = queue.Queue(maxsize=MAX_GAMES)
 
@@ -92,6 +98,7 @@ GAME_NAME_TO_CLS = {
 }
 
 game._configure(MAX_GAME_LENGTH, AGENT_DIR)
+game._loadPPOargs(PPO_ARGS)
 
 
 
@@ -270,7 +277,7 @@ def _create_game(user_id, game_name, params={}):
             spectating = True
             game.add_spectator(user_id)
         join_room(game.id)
-        set_curr_room(user_id, game.id)
+        set_curr_room(user_id, game.id)        
         if game.is_ready():
             game.activate()
             ACTIVE_GAMES.add(game.id)
@@ -279,6 +286,7 @@ def _create_game(user_id, game_name, params={}):
         else:
             WAITING_GAMES.put(game.id)
             emit('waiting', { "in_game" : True }, room=game.id)
+        
 
 
 
@@ -559,9 +567,9 @@ if __name__ == '__main__':
     # Dynamically parse host and port from environment variables (set by docker build)
     host = os.getenv('HOST', '0.0.0.0')
     port = int(os.getenv('PORT', 80))
+    #pdb.set_trace()
 
     # Attach exit handler to ensure graceful shutdown
     atexit.register(on_exit)
-
     # https://localhost:80 is external facing address regardless of build environment
     socketio.run(app, host=host, port=port, log_output=app.config['DEBUG'])
