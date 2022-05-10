@@ -79,6 +79,8 @@ class GraphicsManager {
 class OvercookedScene extends Phaser.Scene {
     constructor(config) {
         super({key: "PlayGame"});
+        // console.log('construct scene');
+        // console.log(config.start_state);
         this.state = config.start_state.state;
         this.player_colors = config.player_colors;
         this.terrain = config.terrain;
@@ -98,6 +100,9 @@ class OvercookedScene extends Phaser.Scene {
     }
 
     set_state(state) {
+        // console.log('set state')
+        // console.log(this.hud_data)
+        // console.log(state.state)
         this.hud_data.potential = state.potential;
         this.hud_data.score = state.score;
         this.hud_data.time = Math.round(state.time_left);
@@ -256,6 +261,7 @@ class OvercookedScene extends Phaser.Scene {
             let spriteframe;
             let soup_status;
             if ((obj.name === 'soup') && (terrain_type === 'P')) {
+                console.log(obj)
                 let ingredients = obj._ingredients.map(x => x['name']);
 
                 // select pot sprite

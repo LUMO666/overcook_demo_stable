@@ -136,6 +136,7 @@ def try_create_game(game_name ,**kwargs):
         - Runtime error if server is at max game capacity
         - Propogate any error that occured in game __init__ function
     """
+    #pdb.set_trace()
     try:
         curr_id = FREE_IDS.get(block=False)
         assert FREE_MAP[curr_id], "Current id is already in use"
@@ -530,7 +531,6 @@ def on_exit():
 #############
 # Game Loop #
 #############
-
 def play_game(game, fps=30):
     """
     Asynchronously apply real-time game updates and broadcast state to all clients currently active
@@ -554,6 +554,8 @@ def play_game(game, fps=30):
         socketio.sleep(1/fps)
     
     with game.lock:
+        # print(type(game))
+        print("lock2")
         data = game.get_data()
         socketio.emit('end_game', { "status" : status, "data" : data }, room=game.id)
 

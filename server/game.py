@@ -192,12 +192,12 @@ class Game(ABC):
 
         Subclasses should try to override `apply_actions` if possible. Only override this method if necessary
         """ 
+        
         if not self.is_active:
             return self.Status.INACTIVE
         if self.needs_reset():
             self.reset()
             return self.Status.RESET
-
         self.apply_actions()
         return self.Status.DONE if self.is_finished() else self.Status.ACTIVE
     
@@ -409,6 +409,7 @@ class OvercookedGame(Game):
 
     def __init__(self, layouts=["cramped_room"], mdp_params={}, num_players=2, gameTime=30, playerZero='human', playerOne='human', showPotential=False, randomized=False, **kwargs):
         super(OvercookedGame, self).__init__(**kwargs)
+        print('init game')
         self.show_potential = showPotential
         self.mdp_params = mdp_params
         self.layouts = layouts
@@ -417,6 +418,9 @@ class OvercookedGame(Game):
         self.mp = None
         self.score = 0
         self.phi = 0
+
+        self.cnt = 0
+
         self.max_time = min(int(gameTime), MAX_GAME_TIME)
         self.npc_policies = {}
         self.npc_state_queues = {}
@@ -437,15 +441,27 @@ class OvercookedGame(Game):
         #self.rnn_states = np.zeros((1, self.num_agents, PPO_args.recurrent_N, PPO_args.hidden_size), dtype=np.float32)
         self.masks = np.ones((1, self.num_agents, 1), dtype=np.float32)
         self.curr_layout = self.layouts.pop()
-        self.mdp = OvercookedGridworld.from_layout_name(self.curr_layout, **self.mdp_params)
+        env_params = {'horizon': 800}
+        self.mdp_fn = lambda: OvercookedGridworld.from_layout_name(self.curr_layout, **self.mdp_params)
+        self.mdp = self.mdp_fn()
+        self.base_env = OvercookedEnv(self.mdp_fn, **env_params)
+        self.featurize_fn = lambda state: self.mdp.lossless_state_encoding(state) # Encoding obs for PPO
+        #self.featurize_fn_bc = lambda state: self.mdp.featurize_state(state) # Encoding obs for BC
+        #self.featurize_fn_mapping = {
+        #    "ppo": self.featurize_fn_ppo,
+        #    "bc": self.featurize_fn_bc
+        #}
+        #self.mdp = OvercookedGridworld.from_layout_name(self.curr_layout, **self.mdp_params)
         dummy_state = self.mdp.get_standard_start_state()
-        self.featurize_fn = lambda state: OvercookedEnv.from_mdp(self.mdp, horizon=400).lossless_state_encoding_mdp(state) # Encoding obs for PPO
+
+        #self.featurize_fn = lambda state: OvercookedEnv.from_mdp(self.mdp, horizon=400).lossless_state_encoding_mdp(state) # Encoding obs for PPO
         self.rnn_states = np.zeros((1, self.num_agents, PPO_args.recurrent_N, PPO_args.hidden_size), dtype=np.float32)
         self.obs = self._setup_observation_space()
 
         if randomized:
             random.shuffle(self.layouts)
 
+        print('before get policy')
         if playerZero != 'human':
             player_zero_id = playerZero + '_0'
             self.add_player(player_zero_id, idx=0, buff_size=1, is_human=False)
@@ -487,7 +503,6 @@ class OvercookedGame(Game):
 
 
     def npc_policy_consumer(self, policy_id):
-        
         queue = self.npc_state_queues[policy_id]
         policy = self.npc_policies[policy_id]
         while self._is_active:
@@ -504,7 +519,7 @@ class OvercookedGame(Game):
                                        deterministic=True)
             #actions = np.array(np.split(_t2n(npc_action), 1))
             action = self._action_convertor(npc_action)
-            print("agent",policy.agent_idx,action)
+            #print("agent",policy.agent_idx,action)
             npc_action = Action.INDEX_TO_ACTION[action[0]]
             #npc_action = Action.INDEX_TO_ACTION[action[0]]
             self.rnn_states[:,policy.agent_idx,:,:] = np.array(_t2n(rnn_states)).copy()
@@ -536,6 +551,7 @@ class OvercookedGame(Game):
     def apply_actions(self):
         # Default joint action, as NPC policies and clients probably don't enqueue actions fast 
         # enough to produce one at every tick
+        self.cnt += 1
         joint_action = [Action.STAY] * len(self.players)
 
         # Synchronize individual player actions into a joint-action as required by overcooked logic
@@ -548,7 +564,7 @@ class OvercookedGame(Game):
         #print("joint:",joint_action)
         # Apply overcooked game logic to get state transition
         prev_state = self.state
-        self.state, info = self.mdp.get_state_transition(prev_state, joint_action)
+        self.state, sparse_reward,_ = self.mdp.get_state_transition(prev_state, joint_action)
         if self.show_potential:
             self.phi = self.mdp.potential_function(prev_state, self.mp, gamma=0.99)
 
@@ -558,11 +574,11 @@ class OvercookedGame(Game):
                 self.npc_state_queues[npc_id].put(self.state, block=False)
 
         # Update score based on soup deliveries that might have occured
-        curr_reward = sum(info['sparse_reward_by_agent'])
+        curr_reward = sparse_reward
         self.score += curr_reward
-
+        #print(prev_state, joint_action, sparse_reward,":",self.cnt)
         # Return about the current transition
-        return prev_state, joint_action, info
+        return prev_state, joint_action, sparse_reward
         
 
     def enqueue_action(self, player_id, action):
@@ -640,8 +656,9 @@ class OvercookedGame(Game):
         return obj_dict
 
     def _setup_observation_space(self):
-        dummy_state = self.mdp.get_standard_start_state()
-        obs_shape = self.featurize_fn(dummy_state)[0].shape
+        dummy_state = self.base_env.mdp.get_standard_start_state()
+        featurize_fn_ppo = lambda state: self.mdp.lossless_state_encoding(state)
+        obs_shape = featurize_fn_ppo(dummy_state)[0].shape
         high = np.ones(obs_shape) * float("inf")
         low = np.ones(obs_shape) * 0
 
@@ -649,6 +666,7 @@ class OvercookedGame(Game):
         
 
     def get_policy(self, npc_id, idx=0):
+        print('Start get policy')
         obs_space = []
         obs_space.append(self.obs)
         action_space = []
@@ -657,9 +675,12 @@ class OvercookedGame(Game):
                              obs_space[0],
                              action_space[0],
                              idx)
+        # for i, j in policy.actor.state_dict().items():
+        #     print(i, j.shape)
         policy_actor_state_dict = torch.load(os.getcwd()+'/actor.pt',map_location=torch.device('cpu'))
         policy.actor.load_state_dict(policy_actor_state_dict)
         policy.actor.eval()
+        print('Successfully get policy')
         return policy
 
 

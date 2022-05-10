@@ -6,8 +6,8 @@ services:
             context: ./server
             args:
                 BUILD_ENV: "${BUILD_ENV:-production}"
-                OVERCOOKED_BRANCH: "${OVERCOOKED_BRANCH:-master}"
-                HARL_BRANCH: "${HARL_BRANCH:-master}"
+                OVERCOOKED_BRANCH: "${OVERCOOKED_BRANCH:-6eaceb0a9a2501f1b9fccbf4c7016d6662ed1108}"
+                HARL_BRANCH: "${HARL_BRANCH:-neurips2019}"
                 GRAPHICS: "${GRAPHICS:-overcooked_graphics_v2.2.js}"
         environment: 
             FLASK_ENV: "${BUILD_ENV:-production}"
