@@ -141,6 +141,7 @@ def try_create_game(game_name ,**kwargs):
         curr_id = FREE_IDS.get(block=False)
         assert FREE_MAP[curr_id], "Current id is already in use"
         game_cls = GAME_NAME_TO_CLS.get(game_name, OvercookedGame)
+        # print('try create game params: ', kwargs)
         game = game_cls(id=curr_id, **kwargs)
     except queue.Empty:
         err = RuntimeError("Server at max capacity")
@@ -265,6 +266,7 @@ def  _leave_game(user_id):
     return was_active
 
 def _create_game(user_id, game_name, params={}):
+    # print('create game with params: ', params)
     game, err = try_create_game(game_name, **params)
     if not game:
         emit("creation_failed", { "error" : err.__repr__() })
@@ -426,6 +428,15 @@ def on_create(data):
         
         params = data.get('params', {})
         game_name = data.get('game_name', 'overcooked')
+        user_name = params.get('name', '')
+        with open('user_id.txt', 'r') as f:
+            import json
+            name_lst = json.load(f)
+            # print(name_lst)
+            if user_name not in name_lst:
+                emit("creation_failed", { "error" : 'user id invalid!' })
+                return
+
         _create_game(user_id, game_name, params)
     
 

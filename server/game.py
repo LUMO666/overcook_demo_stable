@@ -408,9 +408,21 @@ class OvercookedGame(Game):
     """
 
     def __init__(self, layouts=["cramped_room"], mdp_params={}, num_players=2, gameTime=30, playerZero='human', playerOne='human', showPotential=False, randomized=False, **kwargs):
+        # print('init game')
+        self.args = kwargs
+        # print('game params: ', self.args)
         super(OvercookedGame, self).__init__(**kwargs)
-        print('init game')
-        self.show_potential = showPotential
+
+        import time
+        self.user_name = self.args['name']
+        self.traj = []
+        self.save_traj = showPotential != 'on'
+        self.traj_save_dir = f'data/{self.args["layout"]}/{playerZero}-{playerOne}/{self.user_name}/'
+        self.traj_save_path = self.traj_save_dir + time.strftime("%Y-%m-%d-%H-%M-%S", time.localtime()) + '.txt'
+
+
+        # self.show_potential = showPotential
+        self.show_potential = False
         self.mdp_params = mdp_params
         self.layouts = layouts
         self.max_players = int(num_players)
@@ -432,7 +444,8 @@ class OvercookedGame(Game):
             "RIGHT" : Direction.EAST,
             "SPACE" : Action.INTERACT
         }
-        self.ticks_per_ai_action = 1
+        # !!! ticks_per_ai_action act as idle
+        self.ticks_per_ai_action = 7
         self.curr_tick = 0
         self.human_players = set()
         self.npc_players = set()
@@ -461,17 +474,17 @@ class OvercookedGame(Game):
         if randomized:
             random.shuffle(self.layouts)
 
-        print('before get policy')
+        # print('before get policy')
         if playerZero != 'human':
             player_zero_id = playerZero + '_0'
             self.add_player(player_zero_id, idx=0, buff_size=1, is_human=False)
-            self.npc_policies[player_zero_id] = self.get_policy(playerZero, idx=0)
+            self.npc_policies[player_zero_id] = self.get_policy(playerZero, self.args['layout'], idx=0)
             self.npc_state_queues[player_zero_id] = LifoQueue()
 
         if playerOne != 'human':
             player_one_id = playerOne + '_1'
             self.add_player(player_one_id, idx=1, buff_size=1, is_human=False)
-            self.npc_policies[player_one_id] = self.get_policy(playerOne, idx=1)
+            self.npc_policies[player_one_id] = self.get_policy(playerOne, self.args['layout'], idx=1)
             self.npc_state_queues[player_one_id] = LifoQueue()
 
     def _action_convertor(self, action):
@@ -564,7 +577,7 @@ class OvercookedGame(Game):
         #print("joint:",joint_action)
         # Apply overcooked game logic to get state transition
         prev_state = self.state
-        self.state, sparse_reward,_ = self.mdp.get_state_transition(prev_state, joint_action)
+        self.state, sparse_reward, _ = self.mdp.get_state_transition(prev_state, joint_action)
         if self.show_potential:
             self.phi = self.mdp.potential_function(prev_state, self.mp, gamma=0.99)
 
@@ -578,6 +591,27 @@ class OvercookedGame(Game):
         self.score += curr_reward
         #print(prev_state, joint_action, sparse_reward,":",self.cnt)
         # Return about the current transition
+
+        if self.save_traj:
+            curr_reward = sparse_reward
+            transition = {
+                "state" : json.dumps(prev_state.to_dict()),
+                "joint_action" : json.dumps(joint_action),
+                "reward" : curr_reward,
+                "time_left" : max(self.max_time - (time() - self.start_time), 0),
+                "score" : self.score,
+                "time_elapsed" : time() - self.start_time,
+                "cur_gameloop" : self.curr_tick,
+                "layout" : json.dumps(self.mdp.terrain_mtx),
+                "layout_name" : self.curr_layout,
+                "player_0_id" : self.players[0],
+                "player_1_id" : self.players[1],
+                "player_0_is_human" : self.players[0] in self.human_players,
+                "player_1_is_human" : self.players[1] in self.human_players
+            }
+
+            self.traj.append(transition)
+
         return prev_state, joint_action, sparse_reward
         
 
@@ -640,6 +674,12 @@ class OvercookedGame(Game):
         # Clear all action queues
         self.clear_pending_actions()
 
+        if self.save_traj:
+            if not os.path.exists(self.traj_save_dir):
+                os.makedirs(self.traj_save_dir)
+            with open(self.traj_save_path, 'w+') as f:
+                json.dump(self.traj, f, indent=4)
+
 
     def get_state(self):
         state_dict = {}
@@ -665,8 +705,8 @@ class OvercookedGame(Game):
         return gym.spaces.Box(np.float32(low), np.float32(high), dtype=np.float32)
         
 
-    def get_policy(self, npc_id, idx=0):
-        print('Start get policy')
+    def get_policy(self, npc_id, layout, idx=0):
+        # print('Start get policy')
         obs_space = []
         obs_space.append(self.obs)
         action_space = []
@@ -677,10 +717,13 @@ class OvercookedGame(Game):
                              idx)
         # for i, j in policy.actor.state_dict().items():
         #     print(i, j.shape)
-        policy_actor_state_dict = torch.load(os.getcwd()+'/actor.pt',map_location=torch.device('cpu'))
+        # TODO(th): rewrite policy path
+        path = f'static/assets/agents/{npc_id}/{layout}_actor.pt'
+        print(f'get policy from: {path}')
+        policy_actor_state_dict = torch.load(path, map_location=torch.device('cpu'))
         policy.actor.load_state_dict(policy_actor_state_dict)
         policy.actor.eval()
-        print('Successfully get policy')
+        # print('Successfully get policy')
         return policy
 
 

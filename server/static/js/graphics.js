@@ -261,7 +261,6 @@ class OvercookedScene extends Phaser.Scene {
             let spriteframe;
             let soup_status;
             if ((obj.name === 'soup') && (terrain_type === 'P')) {
-                console.log(obj)
                 let ingredients = obj._ingredients.map(x => x['name']);
 
                 // select pot sprite

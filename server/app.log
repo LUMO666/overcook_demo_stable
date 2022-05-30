@@ -1,0 +1,433 @@
+try create game params:  {'playerZero': 'RandComputeAI', 'playerOne': 'human', 'layout': 'simple', 'gameTime': '30', 'layouts': ['simple']}
+init game
+game params:  {'id': 0, 'layout': 'simple'}
+before get policy
+Start get policy
+cnn_dims (5, 4)
+Successfully get policy
+(1, 1) facing (0, -1) holding None
+(3, 1) facing (0, -1) holding None
+(1, 1) facing (-1, 0) holding None
+(3, 1) facing (0, -1) holding None
+(1, 1) facing (-1, 0) holding onion@(1, 1)
+(3, 1) facing (0, -1) holding None
+(2, 1) facing (1, 0) holding onion@(2, 1)
+(3, 1) facing (0, -1) holding None
+(2, 1) facing (0, -1) holding onion@(2, 1)
+(3, 1) facing (0, -1) holding None
+put in pot
+(2, 1) facing (0, -1) holding None
+(3, 1) facing (0, -1) holding None
+(1, 1) facing (-1, 0) holding None
+(3, 1) facing (0, -1) holding None
+(1, 1) facing (-1, 0) holding onion@(1, 1)
+(3, 1) facing (0, -1) holding None
+(2, 1) facing (1, 0) holding onion@(2, 1)
+(3, 1) facing (0, -1) holding None
+(2, 1) facing (0, -1) holding onion@(2, 1)
+(3, 1) facing (0, -1) holding None
+(2, 1) facing (0, -1) holding None
+(3, 1) facing (0, -1) holding None
+(1, 1) facing (-1, 0) holding None
+(3, 1) facing (0, -1) holding None
+(1, 1) facing (-1, 0) holding onion@(1, 1)
+(3, 1) facing (0, -1) holding None
+(2, 1) facing (1, 0) holding onion@(2, 1)
+(3, 1) facing (0, -1) holding None
+(2, 1) facing (0, -1) holding onion@(2, 1)
+(3, 1) facing (0, -1) holding None
+(2, 1) facing (0, -1) holding None
+(3, 1) facing (0, -1) holding None
+(2, 1) facing (0, -1) holding None
+(3, 1) facing (0, -1) holding None
+(2, 1) facing (0, -1) holding None
+(3, 1) facing (0, -1) holding None
+(2, 2) facing (0, 1) holding None
+(3, 1) facing (0, -1) holding None
+(2, 2) facing (0, 1) holding None
+(3, 1) facing (0, -1) holding None
+(1, 2) facing (-1, 0) holding None
+(3, 1) facing (0, -1) holding None
+(1, 2) facing (-1, 0) holding None
+(3, 1) facing (0, -1) holding None
+(1, 2) facing (-1, 0) holding None
+(3, 1) facing (0, -1) holding None
+(1, 2) facing (-1, 0) holding None
+(3, 1) facing (0, -1) holding None
+(2, 2) facing (1, 0) holding None
+(3, 1) facing (0, -1) holding None
+(3, 2) facing (1, 0) holding None
+(3, 1) facing (0, -1) holding None
+(2, 2) facing (-1, 0) holding None
+(3, 1) facing (0, -1) holding None
+(2, 1) facing (0, -1) holding None
+(3, 1) facing (0, -1) holding None
+(2, 1) facing (0, -1) holding None
+(3, 1) facing (0, -1) holding None
+(2, 2) facing (0, 1) holding None
+(3, 1) facing (0, -1) holding None
+(2, 2) facing (0, 1) holding None
+(3, 1) facing (0, -1) holding None
+(1, 2) facing (-1, 0) holding None
+(3, 1) facing (0, -1) holding None
+(1, 2) facing (0, 1) holding None
+(3, 1) facing (0, -1) holding None
+(1, 2) facing (0, 1) holding dish@(1, 2)
+(3, 1) facing (0, -1) holding None
+(2, 2) facing (1, 0) holding dish@(2, 2)
+(3, 1) facing (0, -1) holding None
+(2, 1) facing (0, -1) holding dish@(2, 1)
+(3, 1) facing (0, -1) holding None
+(2, 1) facing (0, -1) holding soup@(2, 1) with state ('onion', 3, 20)
+(3, 1) facing (0, -1) holding None
+(2, 2) facing (0, 1) holding soup@(2, 2) with state ('onion', 3, 20)
+(3, 1) facing (0, -1) holding None
+(3, 2) facing (1, 0) holding soup@(3, 2) with state ('onion', 3, 20)
+(3, 1) facing (0, -1) holding None
+(3, 2) facing (0, 1) holding soup@(3, 2) with state ('onion', 3, 20)
+(3, 1) facing (0, -1) holding None
+(3, 2) facing (0, 1) holding None
+(3, 1) facing (0, -1) holding None
+(2, 2) facing (-1, 0) holding None
+(3, 1) facing (0, -1) holding None
+(2, 1) facing (0, -1) holding None
+(3, 1) facing (0, -1) holding None
+(1, 1) facing (-1, 0) holding None
+(3, 1) facing (0, -1) holding None
+(1, 1) facing (-1, 0) holding onion@(1, 1)
+(3, 1) facing (0, -1) holding None
+(2, 1) facing (1, 0) holding onion@(2, 1)
+(3, 1) facing (0, -1) holding None
+(2, 1) facing (0, -1) holding onion@(2, 1)
+(3, 1) facing (0, -1) holding None
+put in pot
+(2, 1) facing (0, -1) holding None
+(3, 1) facing (0, -1) holding None
+(1, 1) facing (-1, 0) holding None
+(3, 1) facing (0, -1) holding None
+(1, 1) facing (-1, 0) holding onion@(1, 1)
+(3, 1) facing (0, -1) holding None
+(2, 1) facing (1, 0) holding onion@(2, 1)
+(3, 1) facing (0, -1) holding None
+(2, 1) facing (0, -1) holding onion@(2, 1)
+(3, 1) facing (0, -1) holding None
+(2, 1) facing (0, -1) holding None
+(3, 1) facing (0, -1) holding None
+(1, 1) facing (-1, 0) holding None
+(3, 1) facing (0, -1) holding None
+(1, 1) facing (-1, 0) holding onion@(1, 1)
+(3, 1) facing (0, -1) holding None
+(2, 1) facing (1, 0) holding onion@(2, 1)
+(3, 1) facing (0, -1) holding None
+(2, 1) facing (0, -1) holding onion@(2, 1)
+(3, 1) facing (0, -1) holding None
+(2, 1) facing (0, -1) holding None
+(3, 1) facing (0, -1) holding None
+(1, 1) facing (-1, 0) holding None
+(3, 1) facing (0, -1) holding None
+(2, 1) facing (1, 0) holding None
+(3, 1) facing (0, -1) holding None
+(1, 1) facing (-1, 0) holding None
+(3, 1) facing (0, -1) holding None
+(1, 2) facing (0, 1) holding None
+(3, 1) facing (0, -1) holding None
+(1, 1) facing (0, -1) holding None
+(3, 1) facing (0, -1) holding None
+(1, 2) facing (0, 1) holding None
+(3, 1) facing (0, -1) holding None
+(1, 1) facing (0, -1) holding None
+(3, 1) facing (0, -1) holding None
+(1, 2) facing (0, 1) holding None
+(3, 1) facing (0, -1) holding None
+(1, 2) facing (0, 1) holding dish@(1, 2)
+(3, 1) facing (0, -1) holding None
+(1, 2) facing (-1, 0) holding dish@(1, 2)
+(3, 1) facing (0, -1) holding None
+(1, 2) facing (-1, 0) holding dish@(1, 2)
+(3, 1) facing (0, -1) holding None
+(1, 2) facing (-1, 0) holding dish@(1, 2)
+(3, 1) facing (0, -1) holding None
+(1, 2) facing (-1, 0) holding dish@(1, 2)
+(3, 1) facing (0, -1) holding None
+(2, 2) facing (1, 0) holding dish@(2, 2)
+(3, 1) facing (0, -1) holding None
+(3, 2) facing (1, 0) holding dish@(3, 2)
+(3, 1) facing (0, -1) holding None
+(2, 2) facing (-1, 0) holding dish@(2, 2)
+(3, 1) facing (0, -1) holding None
+(2, 1) facing (0, -1) holding dish@(2, 1)
+(3, 1) facing (0, -1) holding None
+(2, 1) facing (0, -1) holding dish@(2, 1)
+(3, 1) facing (0, -1) holding None
+(2, 1) facing (0, -1) holding dish@(2, 1)
+(3, 1) facing (0, -1) holding None
+(2, 1) facing (0, -1) holding soup@(2, 1) with state ('onion', 3, 20)
+(3, 1) facing (0, -1) holding None
+(2, 2) facing (0, 1) holding soup@(2, 2) with state ('onion', 3, 20)
+(3, 1) facing (0, -1) holding None
+(3, 2) facing (1, 0) holding soup@(3, 2) with state ('onion', 3, 20)
+(3, 1) facing (0, -1) holding None
+(3, 2) facing (0, 1) holding soup@(3, 2) with state ('onion', 3, 20)
+(3, 1) facing (0, -1) holding None
+(3, 2) facing (0, 1) holding None
+(3, 1) facing (0, -1) holding None
+(2, 2) facing (-1, 0) holding None
+(3, 1) facing (0, -1) holding None
+(2, 1) facing (0, -1) holding None
+(3, 1) facing (0, -1) holding None
+(1, 1) facing (-1, 0) holding None
+(3, 1) facing (0, -1) holding None
+(1, 1) facing (-1, 0) holding onion@(1, 1)
+(3, 1) facing (0, -1) holding None
+(2, 1) facing (1, 0) holding onion@(2, 1)
+(3, 1) facing (0, -1) holding None
+(2, 1) facing (0, -1) holding onion@(2, 1)
+(3, 1) facing (0, -1) holding None
+put in pot
+(2, 1) facing (0, -1) holding None
+(3, 1) facing (0, -1) holding None
+(1, 1) facing (-1, 0) holding None
+(3, 1) facing (0, -1) holding None
+(1, 1) facing (-1, 0) holding onion@(1, 1)
+(3, 1) facing (0, -1) holding None
+(2, 1) facing (1, 0) holding onion@(2, 1)
+(3, 1) facing (0, -1) holding None
+(2, 1) facing (0, -1) holding onion@(2, 1)
+(3, 1) facing (0, -1) holding None
+(2, 1) facing (0, -1) holding None
+(3, 1) facing (0, -1) holding None
+(1, 1) facing (-1, 0) holding None
+(3, 1) facing (0, -1) holding None
+(1, 1) facing (-1, 0) holding onion@(1, 1)
+(3, 1) facing (0, -1) holding None
+(2, 1) facing (1, 0) holding onion@(2, 1)
+(3, 1) facing (0, -1) holding None
+(2, 1) facing (0, -1) holding onion@(2, 1)
+(3, 1) facing (0, -1) holding None
+(2, 1) facing (0, -1) holding None
+(3, 1) facing (0, -1) holding None
+(1, 1) facing (-1, 0) holding None
+(3, 1) facing (0, -1) holding None
+(2, 1) facing (1, 0) holding None
+(3, 1) facing (0, -1) holding None
+(1, 1) facing (-1, 0) holding None
+(3, 1) facing (0, -1) holding None
+(1, 2) facing (0, 1) holding None
+(3, 1) facing (0, -1) holding None
+(1, 1) facing (0, -1) holding None
+(3, 1) facing (0, -1) holding None
+(1, 2) facing (0, 1) holding None
+(3, 1) facing (0, -1) holding None
+(1, 1) facing (0, -1) holding None
+(3, 1) facing (0, -1) holding None
+(1, 2) facing (0, 1) holding None
+(3, 1) facing (0, -1) holding None
+(1, 2) facing (0, 1) holding dish@(1, 2)
+(3, 1) facing (0, -1) holding None
+(1, 2) facing (-1, 0) holding dish@(1, 2)
+(3, 1) facing (0, -1) holding None
+(1, 2) facing (-1, 0) holding dish@(1, 2)
+(3, 1) facing (0, -1) holding None
+(1, 2) facing (-1, 0) holding dish@(1, 2)
+(3, 1) facing (0, -1) holding None
+(1, 2) facing (-1, 0) holding dish@(1, 2)
+(3, 1) facing (0, -1) holding None
+(2, 2) facing (1, 0) holding dish@(2, 2)
+(3, 1) facing (0, -1) holding None
+(3, 2) facing (1, 0) holding dish@(3, 2)
+(3, 1) facing (0, -1) holding None
+(2, 2) facing (-1, 0) holding dish@(2, 2)
+(3, 1) facing (0, -1) holding None
+(2, 1) facing (0, -1) holding dish@(2, 1)
+(3, 1) facing (0, -1) holding None
+(2, 1) facing (0, -1) holding dish@(2, 1)
+(3, 1) facing (0, -1) holding None
+(2, 1) facing (0, -1) holding dish@(2, 1)
+(3, 1) facing (0, -1) holding None
+(2, 1) facing (0, -1) holding soup@(2, 1) with state ('onion', 3, 20)
+(3, 1) facing (0, -1) holding None
+(2, 2) facing (0, 1) holding soup@(2, 2) with state ('onion', 3, 20)
+(3, 1) facing (0, -1) holding None
+(3, 2) facing (1, 0) holding soup@(3, 2) with state ('onion', 3, 20)
+(3, 1) facing (0, -1) holding None
+(3, 2) facing (0, 1) holding soup@(3, 2) with state ('onion', 3, 20)
+(3, 1) facing (0, -1) holding None
+(3, 2) facing (0, 1) holding None
+(3, 1) facing (0, -1) holding None
+(2, 2) facing (-1, 0) holding None
+(3, 1) facing (0, -1) holding None
+(2, 1) facing (0, -1) holding None
+(3, 1) facing (0, -1) holding None
+(1, 1) facing (-1, 0) holding None
+(3, 1) facing (0, -1) holding None
+(1, 1) facing (-1, 0) holding onion@(1, 1)
+(3, 1) facing (0, -1) holding None
+(2, 1) facing (1, 0) holding onion@(2, 1)
+(3, 1) facing (0, -1) holding None
+(2, 1) facing (0, -1) holding onion@(2, 1)
+(3, 1) facing (0, -1) holding None
+put in pot
+(2, 1) facing (0, -1) holding None
+(3, 1) facing (0, -1) holding None
+(1, 1) facing (-1, 0) holding None
+(3, 1) facing (0, -1) holding None
+(1, 1) facing (-1, 0) holding onion@(1, 1)
+(3, 1) facing (0, -1) holding None
+(2, 1) facing (1, 0) holding onion@(2, 1)
+(3, 1) facing (0, -1) holding None
+(2, 1) facing (0, -1) holding onion@(2, 1)
+(3, 1) facing (0, -1) holding None
+(2, 1) facing (0, -1) holding None
+(3, 1) facing (0, -1) holding None
+(1, 1) facing (-1, 0) holding None
+(3, 1) facing (0, -1) holding None
+(1, 1) facing (-1, 0) holding onion@(1, 1)
+(3, 1) facing (0, -1) holding None
+(2, 1) facing (1, 0) holding onion@(2, 1)
+(3, 1) facing (0, -1) holding None
+(2, 1) facing (0, -1) holding onion@(2, 1)
+(3, 1) facing (0, -1) holding None
+(2, 1) facing (0, -1) holding None
+(3, 1) facing (0, -1) holding None
+(1, 1) facing (-1, 0) holding None
+(3, 1) facing (0, -1) holding None
+(2, 1) facing (1, 0) holding None
+(3, 1) facing (0, -1) holding None
+(1, 1) facing (-1, 0) holding None
+(3, 1) facing (0, -1) holding None
+(1, 2) facing (0, 1) holding None
+(3, 1) facing (0, -1) holding None
+(1, 1) facing (0, -1) holding None
+(3, 1) facing (0, -1) holding None
+(1, 2) facing (0, 1) holding None
+(3, 1) facing (0, -1) holding None
+(1, 1) facing (0, -1) holding None
+(3, 1) facing (0, -1) holding None
+(1, 2) facing (0, 1) holding None
+(3, 1) facing (0, -1) holding None
+(1, 2) facing (0, 1) holding dish@(1, 2)
+(3, 1) facing (0, -1) holding None
+(1, 2) facing (-1, 0) holding dish@(1, 2)
+(3, 1) facing (0, -1) holding None
+(1, 2) facing (-1, 0) holding dish@(1, 2)
+(3, 1) facing (0, -1) holding None
+(1, 2) facing (-1, 0) holding dish@(1, 2)
+(3, 1) facing (0, -1) holding None
+(1, 2) facing (-1, 0) holding dish@(1, 2)
+(3, 1) facing (0, -1) holding None
+(2, 2) facing (1, 0) holding dish@(2, 2)
+(3, 1) facing (0, -1) holding None
+(3, 2) facing (1, 0) holding dish@(3, 2)
+(3, 1) facing (0, -1) holding None
+(2, 2) facing (-1, 0) holding dish@(2, 2)
+(3, 1) facing (0, -1) holding None
+(2, 1) facing (0, -1) holding dish@(2, 1)
+(3, 1) facing (0, -1) holding None
+(2, 1) facing (0, -1) holding dish@(2, 1)
+(3, 1) facing (0, -1) holding None
+(2, 1) facing (0, -1) holding dish@(2, 1)
+(3, 1) facing (0, -1) holding None
+(2, 1) facing (0, -1) holding soup@(2, 1) with state ('onion', 3, 20)
+(3, 1) facing (0, -1) holding None
+(2, 2) facing (0, 1) holding soup@(2, 2) with state ('onion', 3, 20)
+(3, 1) facing (0, -1) holding None
+(3, 2) facing (1, 0) holding soup@(3, 2) with state ('onion', 3, 20)
+(3, 1) facing (0, -1) holding None
+(3, 2) facing (0, 1) holding soup@(3, 2) with state ('onion', 3, 20)
+(3, 1) facing (0, -1) holding None
+(3, 2) facing (0, 1) holding None
+(3, 1) facing (0, -1) holding None
+(2, 2) facing (-1, 0) holding None
+(3, 1) facing (0, -1) holding None
+(2, 1) facing (0, -1) holding None
+(3, 1) facing (0, -1) holding None
+(1, 1) facing (-1, 0) holding None
+(3, 1) facing (0, -1) holding None
+(1, 1) facing (-1, 0) holding onion@(1, 1)
+(3, 1) facing (0, -1) holding None
+(2, 1) facing (1, 0) holding onion@(2, 1)
+(3, 1) facing (0, -1) holding None
+(2, 1) facing (0, -1) holding onion@(2, 1)
+(3, 1) facing (0, -1) holding None
+put in pot
+(2, 1) facing (0, -1) holding None
+(3, 1) facing (0, -1) holding None
+(1, 1) facing (-1, 0) holding None
+(3, 1) facing (0, -1) holding None
+(1, 1) facing (-1, 0) holding onion@(1, 1)
+(3, 1) facing (0, -1) holding None
+(2, 1) facing (1, 0) holding onion@(2, 1)
+(3, 1) facing (0, -1) holding None
+(2, 1) facing (0, -1) holding onion@(2, 1)
+(3, 1) facing (0, -1) holding None
+(2, 1) facing (0, -1) holding None
+(3, 1) facing (0, -1) holding None
+(1, 1) facing (-1, 0) holding None
+(3, 1) facing (0, -1) holding None
+(1, 1) facing (-1, 0) holding onion@(1, 1)
+(3, 1) facing (0, -1) holding None
+(2, 1) facing (1, 0) holding onion@(2, 1)
+(3, 1) facing (0, -1) holding None
+(2, 1) facing (0, -1) holding onion@(2, 1)
+(3, 1) facing (0, -1) holding None
+(2, 1) facing (0, -1) holding None
+(3, 1) facing (0, -1) holding None
+(1, 1) facing (-1, 0) holding None
+(3, 1) facing (0, -1) holding None
+(2, 1) facing (1, 0) holding None
+(3, 1) facing (0, -1) holding None
+(1, 1) facing (-1, 0) holding None
+(3, 1) facing (0, -1) holding None
+(1, 2) facing (0, 1) holding None
+(3, 1) facing (0, -1) holding None
+(1, 1) facing (0, -1) holding None
+(3, 1) facing (0, -1) holding None
+(1, 2) facing (0, 1) holding None
+(3, 1) facing (0, -1) holding None
+(1, 1) facing (0, -1) holding None
+(3, 1) facing (0, -1) holding None
+(1, 2) facing (0, 1) holding None
+(3, 1) facing (0, -1) holding None
+(1, 2) facing (0, 1) holding dish@(1, 2)
+(3, 1) facing (0, -1) holding None
+(1, 2) facing (-1, 0) holding dish@(1, 2)
+(3, 1) facing (0, -1) holding None
+(1, 2) facing (-1, 0) holding dish@(1, 2)
+(3, 1) facing (0, -1) holding None
+(1, 2) facing (-1, 0) holding dish@(1, 2)
+(3, 1) facing (0, -1) holding None
+(1, 2) facing (-1, 0) holding dish@(1, 2)
+(3, 1) facing (0, -1) holding None
+(2, 2) facing (1, 0) holding dish@(2, 2)
+(3, 1) facing (0, -1) holding None
+(3, 2) facing (1, 0) holding dish@(3, 2)
+(3, 1) facing (0, -1) holding None
+(2, 2) facing (-1, 0) holding dish@(2, 2)
+(3, 1) facing (0, -1) holding None
+(2, 1) facing (0, -1) holding dish@(2, 1)
+(3, 1) facing (0, -1) holding None
+(2, 1) facing (0, -1) holding dish@(2, 1)
+(3, 1) facing (0, -1) holding None
+(2, 1) facing (0, -1) holding dish@(2, 1)
+(3, 1) facing (0, -1) holding None
+(2, 1) facing (0, -1) holding soup@(2, 1) with state ('onion', 3, 20)
+(3, 1) facing (0, -1) holding None
+(2, 2) facing (0, 1) holding soup@(2, 2) with state ('onion', 3, 20)
+(3, 1) facing (0, -1) holding None
+ding dish@(2, 2)
+(3, 1) facing (0, -1) holding None
+(3, 2) facing (1, 0) holding dish@(3, 2)
+(3, 1) facing (0, -1) holding None
+(2, 2) facing (-1, 0) holding dish@(2, 2)
+(3, 1) facing (0, -1) holding None
+(2, 1) facing (0, -1) holding dish@(2, 1)
+(3, 1) facing (0, -1) holding None
+(2, 1) facing (0, -1) holding dish@(2, 1)
+(3, 1) facing (0, -1) holding None
+(2, 1) facing (0, -1) holding dish@(2, 1)
+(3, 1) facing (0, -1) holding None
+(2, 1) facing (0, -1) holding soup@(2, 1) with state ('onion', 3, 20)
+(3, 1) facing (0, -1) holding None
+(2, 2) facing (0, 1) holding soup@(2, 2) with state ('onion', 3, 20)
+(3, 1) facing (0, -1) holding None
+(3, 2) facing (1, 0) holding soup@(3, 2) with state ('onion', 3, 20)

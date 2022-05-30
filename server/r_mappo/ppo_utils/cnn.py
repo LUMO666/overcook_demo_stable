@@ -87,7 +87,7 @@ class CNNBase(nn.Module):
                 kernel_size=np.array([kernel_size, kernel_size], dtype=np.float32),
                 stride=np.array([stride, stride], dtype=np.float32),
             )
-        print("cnn_dims", cnn_dims)
+        # print("cnn_dims", cnn_dims)
         
         if (cnn_layers_params[-1][0] * cnn_dims[0] * cnn_dims[1]) > 20000:
             cnn_layers += [
