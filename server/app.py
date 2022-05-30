@@ -1,5 +1,6 @@
 import os
 import pdb
+import traceback
 
 # Import and patch the production eventlet server if necessary
 #if os.getenv('FLASK_ENV', 'production') == 'production':
@@ -14,7 +15,7 @@ from threading import Lock
 from utils import ThreadSafeSet, ThreadSafeDict
 from flask import Flask, render_template, jsonify, request
 from flask_socketio import SocketIO, join_room, leave_room, emit
-from game import OvercookedGame, OvercookedTutorial, Game, OvercookedPsiturk
+from game import OvercookedGame, OvercookedTutorial, Game, OvercookedPsiturk, OvercookedGame_new
 import game
 
 
@@ -94,7 +95,8 @@ USER_ROOMS = ThreadSafeDict()
 GAME_NAME_TO_CLS = {
     "overcooked" : OvercookedGame,
     "tutorial" : OvercookedTutorial,
-    "psiturk" : OvercookedPsiturk
+    "psiturk" : OvercookedPsiturk,
+    "new_env" : OvercookedGame_new
 }
 
 game._configure(MAX_GAME_LENGTH, AGENT_DIR)
@@ -124,7 +126,7 @@ app.logger.addHandler(handler)
 # Global Coordination Functions #
 #################################
 
-def try_create_game(game_name ,**kwargs):
+def try_create_game(game_name, new_env,**kwargs):
     """
     Tries to create a brand new Game object based on parameters in `kwargs`
     
@@ -140,6 +142,8 @@ def try_create_game(game_name ,**kwargs):
     try:
         curr_id = FREE_IDS.get(block=False)
         assert FREE_MAP[curr_id], "Current id is already in use"
+        if new_env == "on":
+            game_name = "new_env"
         game_cls = GAME_NAME_TO_CLS.get(game_name, OvercookedGame)
         # print('try create game params: ', kwargs)
         game = game_cls(id=curr_id, **kwargs)
@@ -147,6 +151,7 @@ def try_create_game(game_name ,**kwargs):
         err = RuntimeError("Server at max capacity")
         return None, err
     except Exception as e:
+        print(traceback.print_exc())
         return None, e
     else:
         GAMES[game.id] = game
@@ -429,6 +434,7 @@ def on_create(data):
         params = data.get('params', {})
         game_name = data.get('game_name', 'overcooked')
         user_name = params.get('name', '')
+        new_env = params.get('new_env', '')
         with open('user_id.txt', 'r') as f:
             import json
             name_lst = json.load(f)
